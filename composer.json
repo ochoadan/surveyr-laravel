@@ -1,0 +1,16 @@
+{
+    "name": "dev7studios/surveyr-laravel",
+    "description": "Laravel integration for Surveyr",
+    "autoload": {
+        "psr-4": {
+            "Dev7studios\\Surveyr\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dev7studios\\Surveyr\\SurveyrServiceProvider"
+            ]
+        }
+    }
+}
