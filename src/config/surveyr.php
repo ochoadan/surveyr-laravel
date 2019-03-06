@@ -34,6 +34,6 @@ return [
     |
     */
 
-    'url' => env('SURVEYR_URL', 'http://surveyr.loc'),
+    'url' => env('SURVEYR_URL', 'https://surveyr.io'),
 
 ];
