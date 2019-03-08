@@ -14,6 +14,11 @@ class Event extends BaseEvent
     public $shouldMonitor = false;
 
     /**
+     * @var string
+     */
+    protected $eventIdentifier = null;
+
+    /**
      * @return void
      */
     public function monitor()
@@ -21,6 +26,7 @@ class Event extends BaseEvent
         $this->shouldMonitor = true;
 
         $this->before(function () {
+            $this->eventIdentifier = sha1($this->expression . $this->command . microtime());
             $this->reportEventToSurveyr('start');
         });
         $this->after(function () {
@@ -39,11 +45,11 @@ class Event extends BaseEvent
             return;
         }
 
-        $timezone   = $this->timezone ? $this->timezone : config('app.timezone');
-        $identifier = sha1($this->command . $this->expression . $timezone);
+        $timezone  = $this->timezone ? $this->timezone : config('app.timezone');
+        $monitorId = sha1($this->command . $this->expression . $timezone);
 
         try {
-            (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$identifier}/{$position}");
+            (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}?event={$this->eventIdentifier}");
         } catch (\Exception $e) {
             report($e);
         }
