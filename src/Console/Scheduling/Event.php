@@ -32,6 +32,8 @@ class Event extends BaseEvent
         $this->after(function () {
             $this->reportEventToSurveyr('finish');
         });
+
+        return $this;
     }
 
     /**
