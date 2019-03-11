@@ -51,7 +51,9 @@ class Event extends BaseEvent
         $monitorId = sha1($this->command . $this->expression . $timezone);
 
         try {
-            (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}?event={$this->eventIdentifier}");
+            retry(3, function () use ($appId, $monitorId, $position) {
+                (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}?event={$this->eventIdentifier}");
+            }, 500);
         } catch (\Exception $e) {
             report($e);
         }
