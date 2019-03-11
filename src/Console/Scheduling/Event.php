@@ -25,6 +25,8 @@ class Event extends BaseEvent
     {
         $this->shouldMonitor = true;
 
+        $this->ensureOutputIsBeingCaptured();
+
         $this->before(function () {
             $this->eventIdentifier = sha1($this->expression . $this->command . microtime());
             $this->reportEventToSurveyr('start');
@@ -50,9 +52,23 @@ class Event extends BaseEvent
         $timezone  = $this->timezone ? $this->timezone : config('app.timezone');
         $monitorId = sha1($this->command . $this->expression . $timezone);
 
+        $output = null;
+        if ($position == 'finish' && $this->output) {
+            $output = @file_get_contents($this->output);
+        }
+
         try {
-            retry(3, function () use ($appId, $monitorId, $position) {
-                (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}?event={$this->eventIdentifier}");
+            retry(3, function () use ($appId, $monitorId, $position, $output) {
+                if ($position == 'finish') {
+                    (new Client)->post(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}", [
+                        'json' => [
+                            'event'  => $this->eventIdentifier,
+                            'output' => $output,
+                        ]
+                    ]);
+                } else {
+                    (new Client)->get(config('surveyr.url') . "/ping/{$appId}/{$monitorId}/{$position}?event={$this->eventIdentifier}");
+                }
             }, 500);
         } catch (\Exception $e) {
             report($e);
