@@ -16,12 +16,6 @@ composer require dev7studios/surveyr-laravel
 
 The package will automatically register itself.
 
-You also need to make sure your Laravel app has Guzzle installed:
-
-```
-composer require guzzlehttp/guzzle
-```
-
 Publish the `config/surveyr.php` config file with:
 
 ```
