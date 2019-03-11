@@ -72,6 +72,9 @@ class SyncScheduleMonitors extends Command
             $timezone = $event->timezone ? $event->timezone : config('app.timezone');
 
             $this->info('Creating schedule monitor...');
+            if ($event->description) {
+                $this->line('Name: ' . $event->description);
+            }
             $this->line('Command: ' . $event->command);
             $this->line('Schedule: ' . $event->expression);
             $this->line('Timezone: ' . $timezone);
@@ -80,6 +83,7 @@ class SyncScheduleMonitors extends Command
                 $response = $client->request('POST', '/api/schedule-monitors', [
                     'json' => [
                         'identifier' => $appId,
+                        'name'       => $event->description,
                         'command'    => $event->command,
                         'schedule'   => $event->expression,
                         'timezone'   => $timezone,
