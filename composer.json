@@ -7,7 +7,7 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "6.*"
+        "guzzlehttp/guzzle": "6.*|7.*"
     },
     "extra": {
         "laravel": {
